@@ -11,7 +11,9 @@ import com.cba.provident.repository.network.CustomerService;
 import java.util.List;
 
 import io.reactivex.Single;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CustomerRepository {
 
     private final CustomerService service;
@@ -20,20 +22,6 @@ public class CustomerRepository {
     private final DbToModelConverter dbToModelConverter;
     private final ApiListToDbConverter apiListToDbConverter;
     private final ApiToDbConverter apiToDbConverter;
-
-    public CustomerRepository(CustomerService service,
-                              CustomerDatabase customerDatabase,
-                              DbListToModelConverter dbListToModelConverter,
-                              ApiListToDbConverter apiListToDbConverter,
-                              DbToModelConverter dbToModelConverter,
-                              ApiToDbConverter apiToDbConverter) {
-        this.service = service;
-        this.customerDatabase = customerDatabase;
-        this.dbListToModelConverter = dbListToModelConverter;
-        this.apiListToDbConverter = apiListToDbConverter;
-        this.dbToModelConverter = dbToModelConverter;
-        this.apiToDbConverter = apiToDbConverter;
-    }
 
     public Single<List<CustomerModel>> getCustomers() {
         return service.getCustomers()

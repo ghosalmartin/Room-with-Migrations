@@ -39,13 +39,16 @@ public class CustomerActivity extends AppCompatActivity implements CustomerView,
 
         getLifecycle().addObserver(customerDatabase);
 
+        DbToModelConverter dbToModelConverter = new DbToModelConverter();
+        ApiToDbConverter apiToDbConverter = new ApiToDbConverter();
+
         CustomerRepository customerRepository = new CustomerRepository(
                 Network.customerService,
                 customerDatabase,
-                new DbListToModelConverter(),
-                new ApiListToDbConverter(),
-                new DbToModelConverter(),
-                new ApiToDbConverter()
+                new DbListToModelConverter(dbToModelConverter),
+                dbToModelConverter,
+                new ApiListToDbConverter(apiToDbConverter),
+                apiToDbConverter
         );
 
         setupDialog();
@@ -58,7 +61,8 @@ public class CustomerActivity extends AppCompatActivity implements CustomerView,
                 this,
                 customerRepository,
                 new CustomerListModelToCustomerUIModelConverter(),
-                new CustomerModelToCustomerDetailsUIModelConverter());
+                new CustomerModelToCustomerDetailsUIModelConverter(),
+                null);
 
         getLifecycle().addObserver(viewModel);
 

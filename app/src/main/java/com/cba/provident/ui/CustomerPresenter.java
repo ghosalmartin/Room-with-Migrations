@@ -13,29 +13,21 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 class CustomerPresenter implements LifecycleObserver {
 
     private CustomerView view;
     private CustomerRepository repository;
     private CustomerListModelToCustomerUIModelConverter converter;
     private CustomerModelToCustomerDetailsUIModelConverter detailsConverter;
-    private MutableLiveData<List<CustomerUIModel>> dataStream = new MutableLiveData<>();
-    private MutableLiveData<String> errorStream = new MutableLiveData<>();
-    private MutableLiveData<CustomerDetailsUIModel> customerSelectedStream = new MutableLiveData<>();
+
+    private final MutableLiveData<List<CustomerUIModel>> dataStream = new MutableLiveData<>();
+    private final MutableLiveData<String> errorStream = new MutableLiveData<>();
+    private final MutableLiveData<CustomerDetailsUIModel> customerSelectedStream = new MutableLiveData<>();
 
     private Disposable disposable;
-
-    CustomerPresenter(
-            CustomerView view,
-            CustomerRepository repository,
-            CustomerListModelToCustomerUIModelConverter converter,
-            CustomerModelToCustomerDetailsUIModelConverter detailsConverter) {
-        this.view = view;
-        this.repository = repository;
-        this.converter = converter;
-        this.detailsConverter = detailsConverter;
-    }
 
     LiveData<List<CustomerUIModel>> getDataStream() {
         return dataStream;

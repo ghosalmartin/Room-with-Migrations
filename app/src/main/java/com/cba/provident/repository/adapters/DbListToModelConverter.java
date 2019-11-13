@@ -7,21 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.functions.Function;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class DbListToModelConverter implements Function<List<CustomerDbModel>, List<CustomerModel>> {
+
+    private DbToModelConverter converter;
 
     @Override
     public List<CustomerModel> apply(List<CustomerDbModel> customerDbModels) {
         ArrayList<CustomerModel> customers = new ArrayList<>();
 
         for (CustomerDbModel customerApiModel : customerDbModels) {
-            customers.add(
-                    CustomerModel.builder()
-                            .id(customerApiModel.getId())
-                            .displayName(customerApiModel.getDisplayName())
-                            .status(customerApiModel.getStatus())
-                            .build()
-            );
+            customers.add(converter.apply(customerApiModel));
         }
 
         return customers;
