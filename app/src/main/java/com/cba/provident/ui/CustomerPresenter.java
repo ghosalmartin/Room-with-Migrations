@@ -49,13 +49,10 @@ class CustomerPresenter implements LifecycleObserver {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(converter)
-                .subscribe(new BiConsumer<List<CustomerUIModel>, Throwable>() {
-                    @Override
-                    public void accept(List<CustomerUIModel> customerUIModels, Throwable throwable) {
-                        view.hideProgress();
-                        if (customerUIModels != null) dataStream.postValue(customerUIModels);
-                        if (throwable != null) errorStream.postValue(throwable.getMessage());
-                    }
+                .subscribe((customerUIModels, throwable) -> {
+                    view.hideProgress();
+                    if (customerUIModels != null) dataStream.postValue(customerUIModels);
+                    if (throwable != null) errorStream.postValue(throwable.getMessage());
                 });
 
     }

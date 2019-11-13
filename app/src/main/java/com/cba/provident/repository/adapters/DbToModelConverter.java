@@ -19,6 +19,7 @@ public class DbToModelConverter implements Function<List<CustomerDbModel>, List<
                     CustomerModel.builder()
                             .id(customerApiModel.getId())
                             .name(customerApiModel.getDisplayName())
+                            .status(customerApiModel.getStatus())
                             .build()
             );
         }

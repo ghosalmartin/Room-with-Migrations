@@ -18,4 +18,7 @@ public class CustomerDbModel {
 
     @ColumnInfo(name = "displayName")
     private String displayName;
+
+    @ColumnInfo(name = "status")
+    private String status;
 }

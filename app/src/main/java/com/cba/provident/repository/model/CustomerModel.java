@@ -8,4 +8,5 @@ import lombok.Value;
 public class CustomerModel {
     private int id;
     private String name;
+    private String status;
 }

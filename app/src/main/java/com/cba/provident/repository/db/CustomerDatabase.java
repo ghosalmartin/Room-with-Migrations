@@ -25,7 +25,10 @@ public class CustomerDatabase implements LifecycleObserver {
     }
 
     private AppDatabase initDb(Context applicationContext) {
-        return Room.databaseBuilder(applicationContext, AppDatabase.class, "customer-data").build();
+        return Room
+                .databaseBuilder(applicationContext, AppDatabase.class, "customer-data")
+                .addMigrations(AppDatabase.MIGRATION_1_2)
+                .build();
     }
 
     public CustomerDao getDao(){

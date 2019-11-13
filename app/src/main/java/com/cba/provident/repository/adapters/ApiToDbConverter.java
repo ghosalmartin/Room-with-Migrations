@@ -17,7 +17,11 @@ public class ApiToDbConverter implements Function<CustomersApiModel, List<Custom
         ArrayList<CustomerDbModel> customers = new ArrayList<>();
 
         for (CustomerApiModel customerApiModel : customersApiModel.getCustomers()) {
-            customers.add(new CustomerDbModel(customerApiModel.getId(), customerApiModel.getDisplayName()));
+            customers.add(
+                    new CustomerDbModel(
+                            customerApiModel.getId(),
+                            customerApiModel.getDisplayName(),
+                            customerApiModel.getStatus()));
         }
 
         return customers;

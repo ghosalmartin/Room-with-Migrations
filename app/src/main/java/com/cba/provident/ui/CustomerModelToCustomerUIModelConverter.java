@@ -17,7 +17,8 @@ public class CustomerModelToCustomerUIModelConverter implements Function<List<Cu
             customerUIModels.add(
                     new CustomerUIModel(
                             customerModel.getId(),
-                            customerModel.getName()
+                            customerModel.getName(),
+                            customerModel.getStatus()
                     )
             );
         }
