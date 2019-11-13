@@ -12,26 +12,29 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.BiConsumer;
 import io.reactivex.schedulers.Schedulers;
 
 class CustomerPresenter implements LifecycleObserver {
 
     private CustomerView view;
     private CustomerRepository repository;
-    private CustomerModelToCustomerUIModelConverter converter;
+    private CustomerListModelToCustomerUIModelConverter converter;
+    private CustomerModelToCustomerDetailsUIModelConverter detailsConverter;
     private MutableLiveData<List<CustomerUIModel>> dataStream = new MutableLiveData<>();
     private MutableLiveData<String> errorStream = new MutableLiveData<>();
+    private MutableLiveData<CustomerDetailsUIModel> customerSelectedStream = new MutableLiveData<>();
 
     private Disposable disposable;
 
     CustomerPresenter(
             CustomerView view,
             CustomerRepository repository,
-            CustomerModelToCustomerUIModelConverter converter) {
+            CustomerListModelToCustomerUIModelConverter converter,
+            CustomerModelToCustomerDetailsUIModelConverter detailsConverter) {
         this.view = view;
         this.repository = repository;
         this.converter = converter;
+        this.detailsConverter = detailsConverter;
     }
 
     LiveData<List<CustomerUIModel>> getDataStream() {
@@ -40,6 +43,10 @@ class CustomerPresenter implements LifecycleObserver {
 
     LiveData<String> getErrorStream() {
         return errorStream;
+    }
+
+    LiveData<CustomerDetailsUIModel> getCustomerSelectedStream() {
+        return customerSelectedStream;
     }
 
     void fetchData() {
@@ -58,7 +65,17 @@ class CustomerPresenter implements LifecycleObserver {
     }
 
     void customerSelected(int customerId) {
-
+        view.showProgress();
+        if (disposable != null) disposable.dispose();
+        disposable = repository.getCustomerDetails(customerId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(detailsConverter)
+                .subscribe((customerUIModel, throwable) -> {
+                    view.hideProgress();
+                    if (customerUIModel != null) customerSelectedStream.postValue(customerUIModel);
+                    if (throwable != null) errorStream.postValue(throwable.getMessage());
+                });
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)

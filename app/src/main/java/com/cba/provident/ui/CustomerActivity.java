@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cba.provident.R;
 import com.cba.provident.repository.CustomerRepository;
+import com.cba.provident.repository.adapters.ApiListToDbConverter;
 import com.cba.provident.repository.adapters.ApiToDbConverter;
-import com.cba.provident.repository.adapters.ApiToModelConverter;
+import com.cba.provident.repository.adapters.DbListToModelConverter;
 import com.cba.provident.repository.adapters.DbToModelConverter;
 import com.cba.provident.repository.db.CustomerDatabase;
 import com.cba.provident.repository.network.Network;
@@ -41,7 +42,8 @@ public class CustomerActivity extends AppCompatActivity implements CustomerView,
         CustomerRepository customerRepository = new CustomerRepository(
                 Network.customerService,
                 customerDatabase,
-                new ApiToModelConverter(),
+                new DbListToModelConverter(),
+                new ApiListToDbConverter(),
                 new DbToModelConverter(),
                 new ApiToDbConverter()
         );
@@ -55,12 +57,14 @@ public class CustomerActivity extends AppCompatActivity implements CustomerView,
         viewModel = new CustomerPresenter(
                 this,
                 customerRepository,
-                new CustomerModelToCustomerUIModelConverter());
+                new CustomerListModelToCustomerUIModelConverter(),
+                new CustomerModelToCustomerDetailsUIModelConverter());
 
         getLifecycle().addObserver(viewModel);
 
         viewModel.getDataStream().observe(this, data -> customerAdapter.update(data));
-        viewModel.getErrorStream().observe(this, error -> showError("Error", error));
+        viewModel.getErrorStream().observe(this, error -> showError(error));
+        viewModel.getCustomerSelectedStream().observe(this, customerDetailsUIModel -> CustomerDetailsActivity.show(this, customerDetailsUIModel));
     }
 
     private void setupDialog() {
@@ -103,9 +107,9 @@ public class CustomerActivity extends AppCompatActivity implements CustomerView,
         return true;
     }
 
-    private void showError(String title, String message) {
+    private void showError(String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setTitle("Error");
         alertDialogBuilder.setMessage(message).setCancelable(false)
                 .setPositiveButton("OK", (dialog, id) -> dialog.dismiss());
 

@@ -7,7 +7,7 @@ import java.util.List;
 
 import io.reactivex.functions.Function;
 
-public class CustomerModelToCustomerUIModelConverter implements Function<List<CustomerModel>, List<CustomerUIModel>> {
+public class CustomerListModelToCustomerUIModelConverter implements Function<List<CustomerModel>, List<CustomerUIModel>> {
 
     @Override
     public List<CustomerUIModel> apply(List<CustomerModel> customerModels) {
@@ -17,7 +17,7 @@ public class CustomerModelToCustomerUIModelConverter implements Function<List<Cu
             customerUIModels.add(
                     new CustomerUIModel(
                             customerModel.getId(),
-                            customerModel.getName(),
+                            customerModel.getDisplayName(),
                             customerModel.getStatus()
                     )
             );

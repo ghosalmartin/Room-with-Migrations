@@ -1,29 +1,25 @@
 package com.cba.provident.repository.adapters;
 
-
 import com.cba.provident.repository.db.model.CustomerDbModel;
 import com.cba.provident.repository.network.model.CustomerApiModel;
-import com.cba.provident.repository.network.model.CustomersApiModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.functions.Function;
 
-public class ApiToDbConverter implements Function<CustomersApiModel, List<CustomerDbModel>> {
+public class ApiToDbConverter implements Function<CustomerApiModel, CustomerDbModel> {
 
     @Override
-    public List<CustomerDbModel> apply(CustomersApiModel customersApiModel) {
-        ArrayList<CustomerDbModel> customers = new ArrayList<>();
-
-        for (CustomerApiModel customerApiModel : customersApiModel.getCustomers()) {
-            customers.add(
-                    new CustomerDbModel(
-                            customerApiModel.getId(),
-                            customerApiModel.getDisplayName(),
-                            customerApiModel.getStatus()));
-        }
-
-        return customers;
+    public CustomerDbModel apply(CustomerApiModel customersApiModel) {
+        return CustomerDbModel.builder()
+                .id(customersApiModel.getId())
+                .displayName(customersApiModel.getDisplayName())
+                .status(customersApiModel.getStatus())
+                .firstName(customersApiModel.getFirstName())
+                .lastName(customersApiModel.getLastName())
+                .newIssueAllowed(customersApiModel.isNewIssueAllowed())
+                .latitude(customersApiModel.getLatitude())
+                .longitude(customersApiModel.getLongitude())
+                .preferredCollectionDay(customersApiModel.getPreferredCollectionDay())
+                .preferredCollectionTime(customersApiModel.getPreferredCollectionTime())
+                .build();
     }
 }

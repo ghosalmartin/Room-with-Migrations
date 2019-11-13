@@ -1,29 +1,30 @@
 package com.cba.provident.repository.adapters;
 
+import com.cba.provident.repository.db.model.CustomerDbModel;
 import com.cba.provident.repository.model.CustomerModel;
-import com.cba.provident.repository.network.model.CustomerApiModel;
-import com.cba.provident.repository.network.model.CustomersApiModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.functions.Function;
 
-public class ApiToModelConverter implements Function<CustomersApiModel, List<CustomerModel>> {
+public class DbListToModelConverter implements Function<List<CustomerDbModel>, List<CustomerModel>> {
 
     @Override
-    public List<CustomerModel> apply(CustomersApiModel customersApiModel) {
+    public List<CustomerModel> apply(List<CustomerDbModel> customerDbModels) {
         ArrayList<CustomerModel> customers = new ArrayList<>();
 
-        for (CustomerApiModel customerApiModel : customersApiModel.getCustomers()) {
+        for (CustomerDbModel customerApiModel : customerDbModels) {
             customers.add(
                     CustomerModel.builder()
                             .id(customerApiModel.getId())
-                            .name(customerApiModel.getDisplayName())
+                            .displayName(customerApiModel.getDisplayName())
+                            .status(customerApiModel.getStatus())
                             .build()
             );
         }
 
         return customers;
     }
+
 }

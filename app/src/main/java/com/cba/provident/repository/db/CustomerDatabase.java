@@ -2,9 +2,7 @@ package com.cba.provident.repository.db;
 
 import android.content.Context;
 
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
 import androidx.room.Room;
 
 public class CustomerDatabase implements LifecycleObserver {
@@ -28,15 +26,11 @@ public class CustomerDatabase implements LifecycleObserver {
         return Room
                 .databaseBuilder(applicationContext, AppDatabase.class, "customer-data")
                 .addMigrations(AppDatabase.MIGRATION_1_2)
+                .addMigrations(AppDatabase.MIGRATION_2_3)
                 .build();
     }
 
-    public CustomerDao getDao(){
+    public CustomerDao getDao() {
         return db.customerDao();
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    void onDestroy() {
-        db.close();
     }
 }
