@@ -8,18 +8,18 @@ import io.reactivex.functions.Function;
 public class ApiToDbConverter implements Function<CustomerApiModel, CustomerDbModel> {
 
     @Override
-    public CustomerDbModel apply(CustomerApiModel customersApiModel) {
+    public CustomerDbModel apply(CustomerApiModel customerApiModel) {
         return CustomerDbModel.builder()
-                .id(customersApiModel.getId())
-                .displayName(customersApiModel.getDisplayName())
-                .status(customersApiModel.getStatus())
-                .firstName(customersApiModel.getFirstName())
-                .lastName(customersApiModel.getLastName())
-                .newIssueAllowed(customersApiModel.isNewIssueAllowed())
-                .latitude(customersApiModel.getLatitude())
-                .longitude(customersApiModel.getLongitude())
-                .preferredCollectionDay(customersApiModel.getPreferredCollectionDay())
-                .preferredCollectionTime(customersApiModel.getPreferredCollectionTime())
+                .id(customerApiModel.getId())
+                .displayName(customerApiModel.getDisplayName())
+                .status(customerApiModel.getStatus())
+                .firstName(customerApiModel.getFirstName())
+                .lastName(customerApiModel.getLastName())
+                .newIssueAllowed(customerApiModel.isNewIssueAllowed())
+                .latitude(customerApiModel.getLatitude())
+                .longitude(customerApiModel.getLongitude())
+                .preferredCollectionDay(customerApiModel.getPreferredCollectionDay())
+                .preferredCollectionTime(customerApiModel.getPreferredCollectionTime())
                 .build();
     }
 }

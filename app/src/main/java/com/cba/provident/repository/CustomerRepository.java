@@ -4,6 +4,7 @@ import com.cba.provident.repository.adapters.ApiListToDbConverter;
 import com.cba.provident.repository.adapters.ApiToDbConverter;
 import com.cba.provident.repository.adapters.DbListToModelConverter;
 import com.cba.provident.repository.adapters.DbToModelConverter;
+import com.cba.provident.repository.db.CustomerDao;
 import com.cba.provident.repository.db.CustomerDatabase;
 import com.cba.provident.repository.model.CustomerModel;
 import com.cba.provident.repository.network.CustomerService;
@@ -17,7 +18,7 @@ import lombok.AllArgsConstructor;
 public class CustomerRepository {
 
     private final CustomerService service;
-    private final CustomerDatabase customerDatabase;
+    private final CustomerDao customerDao;
     private final DbListToModelConverter dbListToModelConverter;
     private final DbToModelConverter dbToModelConverter;
     private final ApiListToDbConverter apiListToDbConverter;
@@ -27,14 +28,14 @@ public class CustomerRepository {
         return service.getCustomers()
                 .map(apiListToDbConverter)
                 .flatMap(customerDbModelV1s -> {
-                    customerDatabase.getDao().insertAll(customerDbModelV1s);
-                    return customerDatabase.getDao().getAll();
+                    customerDao.insertAll(customerDbModelV1s);
+                    return customerDao.getAll();
                 })
                 .map(dbListToModelConverter);
     }
 
     public Single<CustomerModel> getCustomerDetails(int id) {
-        return customerDatabase.getDao()
+        return customerDao
                 .getById(id)
                 .flatMap(customerDbModel -> {
                     if (customerDbModel.getFirstName() != null) {
@@ -43,13 +44,13 @@ public class CustomerRepository {
                         return service.getCustomerDetailsById(id)
                                 .flatMap(customerApiModel -> {
                                     //This is required because the ID's are out of sync on the server
+                                    //Realistically should be fixed on server side but hey ho
                                     customerApiModel.setId(id);
-                                    return customerDatabase
-                                            .getDao()
+                                    return customerDao
                                             .update(apiToDbConverter.apply(customerApiModel))
                                             .map(integer -> id);
                                 })
-                                .flatMap(updatedId -> customerDatabase.getDao().getById(updatedId));
+                                .flatMap(customerDao::getById);
                     }
                 })
                 .map(dbToModelConverter);

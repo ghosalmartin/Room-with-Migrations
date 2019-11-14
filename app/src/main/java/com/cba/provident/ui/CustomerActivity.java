@@ -20,6 +20,9 @@ import com.cba.provident.repository.adapters.DbToModelConverter;
 import com.cba.provident.repository.db.CustomerDatabase;
 import com.cba.provident.repository.network.Network;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 //Setting up di would of made this so much easier.
 public class CustomerActivity extends AppCompatActivity implements CustomerView, CustomerClickListener {
 
@@ -44,7 +47,7 @@ public class CustomerActivity extends AppCompatActivity implements CustomerView,
 
         CustomerRepository customerRepository = new CustomerRepository(
                 Network.customerService,
-                customerDatabase,
+                customerDatabase.getDao(),
                 new DbListToModelConverter(dbToModelConverter),
                 dbToModelConverter,
                 new ApiListToDbConverter(apiToDbConverter),
@@ -62,6 +65,8 @@ public class CustomerActivity extends AppCompatActivity implements CustomerView,
                 customerRepository,
                 new CustomerListModelToCustomerUIModelConverter(),
                 new CustomerModelToCustomerDetailsUIModelConverter(),
+                Schedulers.io(),
+                AndroidSchedulers.mainThread(),
                 null);
 
         getLifecycle().addObserver(viewModel);

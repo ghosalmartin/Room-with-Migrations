@@ -10,9 +10,8 @@ import com.cba.provident.repository.CustomerRepository;
 
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -22,6 +21,8 @@ class CustomerPresenter implements LifecycleObserver {
     private CustomerRepository repository;
     private CustomerListModelToCustomerUIModelConverter converter;
     private CustomerModelToCustomerDetailsUIModelConverter detailsConverter;
+    private Scheduler io;
+    private Scheduler mainThread;
 
     private final MutableLiveData<List<CustomerUIModel>> dataStream = new MutableLiveData<>();
     private final MutableLiveData<String> errorStream = new MutableLiveData<>();
@@ -45,8 +46,8 @@ class CustomerPresenter implements LifecycleObserver {
         view.showProgress();
         if (disposable != null) disposable.dispose();
         disposable = repository.getCustomers()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(io)
+                .observeOn(mainThread)
                 .map(converter)
                 .subscribe((customerUIModels, throwable) -> {
                     view.hideProgress();
@@ -60,8 +61,8 @@ class CustomerPresenter implements LifecycleObserver {
         view.showProgress();
         if (disposable != null) disposable.dispose();
         disposable = repository.getCustomerDetails(customerId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(io)
+                .observeOn(mainThread)
                 .map(detailsConverter)
                 .subscribe((customerUIModel, throwable) -> {
                     view.hideProgress();
